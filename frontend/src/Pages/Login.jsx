@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -129,6 +129,17 @@ const Login = () => {
               >
                 Sign in
               </button>
+              <div className="text-center mt-4">
+                <span className="text-gray-600 text-sm">
+                  Don&apos;t have an account?{" "}
+                  <Link
+                    to="/signup"
+                    className="text-blue-600 hover:underline font-medium"
+                  >
+                    Sign up
+                  </Link>
+                </span>
+              </div>
             </div>
           </div>
         </form>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import config from "../config";
 
@@ -146,6 +146,17 @@ const Signup = () => {
               >
                 Sign up
               </button>
+              <div className="text-center mt-2">
+                <span className="text-gray-600 text-sm">
+                  Already have an account?{" "}
+                  <Link
+                    to="/login"
+                    className="text-green-600 hover:underline font-semibold"
+                  >
+                    Login
+                  </Link>
+                </span>
+              </div>
             </div>
           </div>
         </form>

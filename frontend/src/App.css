@@ -1,0 +1,246 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+
+.sidebarcolor {
+  background-color: #fcfcfd;
+  border-right: 1px solid #cbd5e1;
+}
+.linecolor {
+  background-color: #98a2b3;
+}
+
+@font-face {
+  font-family: "Intro Black Caps";
+  src: url("./assets/Intro-Black-Caps.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Intro Bold Caps";
+  src: url("./assets/Intro-Bold-Caps.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.intro-black-caps {
+  font-family: "Intro Black Caps", sans-serif; /* Use the custom font */
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: normal;
+}
+
+.intro-bold-caps {
+  font-family: "Intro Bold Caps", sans-serif; /* Use the custom font */
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.menu {
+  color: #475467;
+  font-family: Inter, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  white-space: nowrap;
+}
+.feature {
+  color: #98a2b3;
+  font-family: Inter;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  white-space: nowrap;
+}
+.header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #cbd5e1;
+}
+.reqsummarybutton {
+  color: #344054;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.searchdiv {
+  border-bottom: 1px solid #cbd5e1;
+  background-color: #f9fafb;
+}
+
+.searchinput {
+  color: #000;
+  font-family: Inter;
+}
+
+.searchinput:focus {
+  outline: none;
+  border: none;
+}
+.searchinput::placeholder {
+  color: #667085;
+}
+
+.searchbutton {
+  color: #ffffff;
+  font-family: Inter;
+}
+
+.cattext {
+  font-family: Inter;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 18px;
+  white-space: nowrap;
+  color: #000;
+  width: auto;
+  height: 38px;
+  padding: 10px 24px;
+  background-color: white;
+  border-radius: 9999px;
+  border: 1px solid #d1d5db;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 8px;
+}
+.categories::-webkit-scrollbar {
+  display: none;
+}
+
+.categories {
+  overflow-x: auto;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+  padding-left: 0; /* Remove left padding on small screens */
+  cursor: grab;
+}
+
+.author {
+  font-family: Inter;
+  color: #667085;
+  font-size: 10px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: normal;
+}
+.title {
+  color: #000;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px; /* 142.857% */
+}
+.bookdescr {
+  color: #667085;
+  font-family: Inter;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 18px;
+}
+.time {
+  color: #344054;
+  font-family: Inter;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 18px;
+}
+.page {
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+}
+.pagination {
+  border-top: 1px solid #cbd5e1;
+}
+@media (max-width: 600px) {
+  .hide-on-small {
+    display: none;
+  }
+}
+@keyframes zoomIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-zoom-in {
+  animation: zoomIn 0.5s ease-out forwards;
+}
+
+.animate-zoom-in-delay-1 {
+  animation: zoomIn 0.5s ease-out 0.1s forwards;
+  opacity: 0;
+}
+
+.animate-zoom-in-delay-2 {
+  animation: zoomIn 0.5s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+.animate-zoom-in-delay-3 {
+  animation: zoomIn 0.5s ease-out 0.3s forwards;
+  opacity: 0;
+}
+/* }////////////////////////////////////////////////////////////////////////////////////////////// */
+
+.check-background svg {
+  width: 65%;
+  transform: translateY(0.25rem);
+  stroke-dasharray: 80;
+  stroke-dashoffset: 80;
+  animation: animateCheck 0.25s forwards 0.75s ease-out;
+}
+
+@keyframes animateCheck {
+  from {
+    stroke-dashoffset: 80;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.bookShadow {
+  border-bottom: 1px solid #cbd5e1;
+}
+
+.error-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  padding: 20px;
+  background-color: #f8f9fa;
+}
+
+.error-page h1 {
+  color: #dc3545;
+  margin-bottom: 20px;
+}
+
+.error-page p {
+  color: #6c757d;
+  max-width: 600px;
+}
+
+

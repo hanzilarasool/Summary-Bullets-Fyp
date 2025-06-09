@@ -1,0 +1,15 @@
+.audio-player-container{
+  position: relative;
+
+}
+.audio-progress-bar{
+  position: absolute;
+  bottom: 0;
+  left: 1%;
+  width: 98%;
+  height: 5px;
+/* background-color: green; */
+margin-bottom: 32px;
+border-radius: 10px;
+align-self: center;
+}

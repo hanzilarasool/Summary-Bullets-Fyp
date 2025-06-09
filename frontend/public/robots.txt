@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /assets/
+Disallow: /*.js$
+Disallow: /*.css$
+Allow: /
+
+
+Sitemap: https://api.summarybullets.com/sitemap.xml
+

@@ -31,7 +31,13 @@ app.use("/api/v1", privacy);
 app.use("/api/v1", User);
 app.use("", sitemap);
 app.use("/api/summary", summaryRoutes);
-
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Welcome to the Book Summary API",
+  });
+}
+);
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.status || 500).json({
@@ -53,10 +59,11 @@ process.on("unhandledRejection", (err) => {
 });
 
 mongoose
-  .connect(process.env.DB_LOCAL_URI)
+  .connect(process.env.DB_CLOUD_URI)
   .then(() => {
-    app.listen(process.env.PORT, () => {
-      console.log(`Server started on PORT ${process.env.PORT}`);
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`Server started on PORT ${PORT}`);
       console.log(`Database connected successfully`);
     });
   })

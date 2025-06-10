@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 dotenv.config();
 app.use(morgan("tiny")); 
 
-app.use( 
+app.use(  
   cors({
     origin: process.env.CORS_ORIGIN,
     credentials: true, 
@@ -62,7 +62,7 @@ mongoose
   .connect(process.env.DB_CLOUD_URI)
   .then(() => {
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
+    app.listen(process.env.PORT, () => {
       console.log(`Server started on PORT ${PORT}`);
       console.log(`Database connected successfully`);
     });

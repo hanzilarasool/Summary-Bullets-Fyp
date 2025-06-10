@@ -88,17 +88,29 @@ exports.signin = catchAsyncErrors(async (req, res, next) => {
   const { password: _, ...userData } = user._doc;
 
   // Send response with cookie and also send token in body
+  // res
+  //   .status(200)
+  //   .cookie("access_token", token, {
+  //     httpOnly: true,
+  //     secure: true,
+  //     sameSite: "strict",
+  //   })
+  //   .json({
+  //     token,
+  //     user: userData
+  //   });
   res
-    .status(200)
-    .cookie("access_token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-    })
-    .json({
-      token,
-      user: userData
-    });
+  .status(200)
+  .cookie("access_token", token, {
+    httpOnly: true,
+    secure: true,           // REQUIRED for cross-site and production
+    sameSite: "none",       // REQUIRED for cross-site cookies
+    // domain: ".yourdomain.com", // Optional if you use a custom domain with subdomains
+  })
+  .json({
+    token,
+    user: userData
+  });
 });
 
 exports.signout = catchAsyncErrors(async (req, res, next) => {

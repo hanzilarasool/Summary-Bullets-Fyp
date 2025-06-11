@@ -2,11 +2,14 @@ const mongoose = require("mongoose");
 
 const privacySchema = new mongoose.Schema(
   {
-    content: {
+    content: { 
       type: String,
       default: "",
     },
+ 
   },
+  
+
   { timestamps: true }
 );
 

@@ -94,7 +94,7 @@
 }
 
 .chat-item.active {
-  background-color: #344054;
+  background-color: #8b919a;
   color: white;
 }
 
@@ -212,7 +212,7 @@
 
 .message.sent {
   /* background-color: #2d89ef; */
-  background-color: #344054;
+  background-color: #8b919a;
   color: white;
   align-self: flex-end;
   pre{

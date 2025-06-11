@@ -98,7 +98,7 @@ exports.signin = catchAsyncErrors(async (req, res, next) => {
   //   .json({
   //     token,
   //     user: userData
-  //   });
+  //   }); 
   res
   .status(200)
   .cookie("access_token", token, {

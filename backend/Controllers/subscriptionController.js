@@ -1,12 +1,11 @@
 require("dotenv").config();
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY,{ apiVersion: "2023-10-16" });
 const User = require("../Models/User");
-
+ 
 exports.subscribeUser = async (req, res) => {
   const { plan } = req.body;
   const { id } = req.user; // from verifyToken middleware
 
-  // Validate plan
   if (!["basic", "standard", "premium"].includes(plan)) {
     return res.status(400).json({ error: "Invalid plan" });
   }
@@ -15,24 +14,23 @@ exports.subscribeUser = async (req, res) => {
     const user = await User.findById(id);
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    // Create or retrieve Stripe customer
     let customerId = user.stripeCustomerId;
     if (!customerId) {
       const customer = await stripe.customers.create({
         email: user.email,
-        metadata: { userId: id.toString() }, // Ensure string for consistency
+        metadata: { userId: id.toString() },
       });
       customerId = customer.id;
       user.stripeCustomerId = customerId;
       await user.save();
+      console.log("User after save:", user);
       console.log(`Created Stripe customer ${customerId} for user ${id}`);
     }
 
-    // Pricing map (cents)
     const prices = {
-      basic: 500, // $5
-      standard: 1000, // $10
-      premium: 2000, // $20
+      basic: 500,
+      standard: 1000,
+      premium: 2000,
     };
 
     const session = await stripe.checkout.sessions.create({
@@ -54,10 +52,22 @@ exports.subscribeUser = async (req, res) => {
       mode: "subscription",
       success_url: `${process.env.CLIENT_URL}/subscription-success?plan=${plan}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.CLIENT_URL}/pricing`,
-      metadata: { userId: id.toString(), plan }, // Ensure userId is string
+      metadata: { userId: id.toString(), plan },
+      subscription_data: {
+        metadata: {
+          userId: id.toString(),
+          plan,
+        },
+      },
     });
 
-    console.log(`Created checkout session ${session.id} for user ${id} with plan ${plan}`);
+    // 🔴 TEMPORARY DB update — replace with webhook logic
+    // user.isPremium = true;
+    // user.plan = plan;
+    // await user.save();
+    // console.log("User after save:", user);
+    // console.log(`TEMPORARY: Updated user ${id} as premium with plan ${plan}`);
+
     return res.status(200).json({ url: session.url });
   } catch (error) {
     console.error("Subscribe error:", error.message, error.stack);
@@ -66,6 +76,8 @@ exports.subscribeUser = async (req, res) => {
 };
 
 exports.handleWebhook = async (req, res) => {
+  console.log("Webhook received:", req.headers, req.body);
+
   const sig = req.headers["stripe-signature"];
   let event;
 
@@ -83,70 +95,91 @@ exports.handleWebhook = async (req, res) => {
 
   try {
     switch (event.type) {
-      case "checkout.session.completed": {
-        const session = event.data.object;
-        const { userId, plan } = session.metadata;
-        const subscriptionId = session.subscription;
+   case "checkout.session.completed": {
+  const session = event.data.object;
+  const { userId, plan } = session.metadata;
+  const subscriptionId = session.subscription;
 
-        console.log(`Processing checkout.session.completed for session ${session.id}`);
-        console.log(`Metadata: userId=${userId}, plan=${plan}, subscriptionId=${subscriptionId}`);
+  if (!userId || !plan || !subscriptionId) {
+    console.error(`Missing metadata or subscriptionId in session:`, session.metadata);
+    break;
+  }
 
-        if (!userId || !plan) {
-          console.error(`Missing metadata in session ${session.id}:`, session.metadata);
-          break;
-        }
+  const user = await User.findById(userId);
+  if (!user) {
+    console.error(`User not found for userId: ${userId}`);
+    break;
+  }
 
-        const user = await User.findById(userId);
-        if (!user) {
-          console.error(`User not found for userId: ${userId}`);
-          break;
-        }
+  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+  console.log("Fetched Stripe Subscription:", subscription);
 
-        // Fetch subscription details
-        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-        const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
 
-        // Update user
-        user.plan = plan;
-        user.subscription = {
-          summaryRequestsUsed: 0,
-          pdfDownloadsUsed: 0,
-          expiresAt: currentPeriodEnd,
-        };
-        user.stripeCustomerId = session.customer;
-        user.isPremium = plan !== "free";
-        await user.save();
+  // ✅ Add the check here:
+  if (subscription && subscription.current_period_end) {
+    user.expiresAt = new Date(subscription.current_period_end * 1000);
+    console.log("Set user.expiresAt to:", user.expiresAt);
+  } else {
+    console.error("Subscription missing current_period_end");
+    break;
+  }
 
-        console.log(`Updated user ${userId} with ${plan} plan, expires at ${currentPeriodEnd}`);
-        break;
-      }
-      case "invoice.paid": {
-        const invoice = event.data.object;
-        const subscriptionId = invoice.subscription;
-        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-        const userId = subscription.metadata.userId;
+  user.plan = plan;
+  user.subscription = {
+    summaryRequestsUsed: 0,
+    pdfDownloadsUsed: 0,
+    downloadHistory: [],
+  };
+  user.stripeCustomerId = session.customer;
+  user.isPremium = plan !== "free";
+  await user.save();
+  console.log("User after save:", user);
 
-        console.log(`Processing invoice.paid for subscription ${subscriptionId}`);
+  console.log(`Updated user ${userId} with ${plan} plan, expires at ${user.expiresAt}`);
+  break;
+}
+case "invoice.paid": {
+  const invoice = event.data.object;
+  const subscriptionId = invoice.subscription;
 
-        if (!userId) {
-          console.error(`No userId in subscription metadata for ${subscriptionId}`);
-          break;
-        }
+  if (!subscriptionId) {
+    console.error("invoice.paid event does not have a subscriptionId. Skipping update.");
+    break;
+  }
 
-        const user = await User.findById(userId);
-        if (!user) {
-          console.error(`User not found for userId: ${userId}`);
-          break;
-        }
+  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+  console.log("Fetched Stripe Subscription:", subscription);
+  const userId = subscription.metadata.userId;
 
-        user.subscription.expiresAt = new Date(subscription.current_period_end * 1000);
-        user.subscription.summaryRequestsUsed = 0;
-        user.subscription.pdfDownloadsUsed = 0;
-        await user.save();
+  if (!userId) {
+    console.error(`No userId in subscription metadata for ${subscriptionId}`);
+    break;
+  }
 
-        console.log(`Renewed subscription for user ${userId}, expires at ${user.subscription.expiresAt}`);
-        break;
-      }
+  const user = await User.findById(userId);
+  if (!user) {
+    console.error(`User not found for userId: ${userId}`);
+    break;
+  }
+
+  // ✅ Add the check here:
+  if (subscription && subscription.current_period_end) {
+    user.expiresAt = new Date(subscription.current_period_end * 1000);
+    console.log("Set user.expiresAt to:", user.expiresAt);
+    
+  } else {
+    console.error("Subscription missing current_period_end");
+    break;
+  }
+
+  user.subscription.summaryRequestsUsed = 0;
+  user.subscription.pdfDownloadsUsed = 0;
+  await user.save();
+console.log("User after save:", user);
+  console.log(`Renewed subscription for user ${userId}, expires at ${user.expiresAt}`);
+  break;
+}
+
       case "customer.subscription.deleted": {
         const subscription = event.data.object;
         const userId = subscription.metadata.userId;
@@ -169,13 +202,16 @@ exports.handleWebhook = async (req, res) => {
         user.subscription = {
           summaryRequestsUsed: 0,
           pdfDownloadsUsed: 0,
-          expiresAt: null,
+          downloadHistory: [],
         };
-        await user.save();
+        user.expiresAt = null; // <-- now top-level
 
+        await user.save();
+        console.log("User after save:", user);
         console.log(`Cancelled subscription for user ${userId}`);
         break;
       }
+
       default:
         console.log(`Unhandled event type: ${event.type}`);
     }
@@ -184,5 +220,23 @@ exports.handleWebhook = async (req, res) => {
   } catch (error) {
     console.error("Webhook handling error:", error.message, error.stack);
     res.status(500).json({ error: "Webhook processing failed" });
+  }
+};
+exports.getSubscriptionStatus = async (req, res) => {
+  const { id } = req.user; // from verifyToken middleware
+
+  try {
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    return res.status(200).json({
+      isPremium: user.isPremium,
+      plan: user.plan,
+      subscription: user.subscription,
+      expiresAt: user.expiresAt, // ✅ add this line
+    });
+  } catch (error) {
+    console.error("Get subscription status error:", error.message, error.stack);
+    return res.status(500).json({ error: "Failed to retrieve subscription status" });
   }
 };

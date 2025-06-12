@@ -94,13 +94,7 @@ const EditPrivacy = () => {
             <p>Loading editor...</p>
           )}
           <div className="flex gap-3 mt-4">
-            <button
-              onClick={() => handleSave(true)}
-              className="flex-1 h-11 p-2.5 bg-white rounded-lg shadow border border-gray-300 text-black text-base font-medium font-['Inter']"
-              disabled={isSaving}
-            >
-              {isSaving ? "Saving..." : "Save as Draft"}
-            </button>
+        
             <button
               onClick={() => handleSave(false)}
               className="flex-1 h-11 p-2.5 bg-emerald-500 rounded-lg shadow text-white text-base font-medium font-['Inter']"
@@ -116,3 +110,10 @@ const EditPrivacy = () => {
 };
 
 export default EditPrivacy;
+    // <button
+    //           onClick={() => handleSave(true)}
+    //           className="flex-1 h-11 p-2.5 bg-white rounded-lg shadow border border-gray-300 text-black text-base font-medium font-['Inter']"
+    //           disabled={isSaving}
+    //         >
+    //           {isSaving ? "Saving..." : "Save as Draft"}
+    //         </button>

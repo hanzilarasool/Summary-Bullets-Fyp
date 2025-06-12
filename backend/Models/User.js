@@ -36,20 +36,18 @@ const userSchema = new mongoose.Schema(
       enum: ["free", "basic", "standard", "premium"],
       default: "free",
     },
-subscription: {
+    subscription: {
       summaryRequestsUsed: { type: Number, default: 0 },
       pdfDownloadsUsed: { type: Number, default: 0 },
-      expiresAt: { type: Date },
-      downloadHistory: [{ type: String }], // Ensure this is an array of strings
+      downloadHistory: [{ type: String }],
     },
+    expiresAt: { type: Date }, // <-- moved here
     stripeCustomerId: String,
-
-
   },
   { timestamps: true }
 );
 
-// Remove existing index if it allows null duplicates
+// Indexes
 userSchema.index({ username: 1 }, { unique: true, sparse: false });
 userSchema.index({ email: 1 }, { unique: true });
 

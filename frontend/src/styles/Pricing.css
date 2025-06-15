@@ -1,0 +1,253 @@
+.subscription-banner{
+  background-color: rgb(252, 252, 252);
+  width: 97%;
+  margin: 0rem auto;
+  margin-bottom: 1.5rem;
+  margin-top: -1.8rem;
+  /* margin: 0 auto; */
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+
+}
+.subscription-content-wrapper{
+    display: flex;
+    /* background-color: green; */
+    width: 100%;
+    gap: 1rem;
+    justify-content: space-between;
+}
+
+.premium-button-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  background-color: rgb(17, 24, 38);
+  color: #ffffff;
+  font-size: 1.125rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  border: 2px solid rgb(17, 24, 38);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: not-allowed;
+  letter-spacing: 0.03em;
+  transition: background-color 0.2s ease;
+  height: 40px;
+  button{
+    white-space: nowrap;
+  }
+
+}
+.premium-star-icon {
+  color: rgb(181, 84, 9);
+}
+/* .premium-plan-button:hover {
+  background-color: #1f2937;
+} */
+
+.subscription-details{
+    /* background-color: rebeccapurple; */
+     display: flex;
+    flex-direction: column;
+
+}
+
+.subscription-details {
+  /* width: 100%; */
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+    /* background-color: #facc15; */
+  align-items: center;
+}
+
+.subscription-status {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #111827;
+
+}
+
+.expiry-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: #4b5563;
+}
+
+.calendar-icon {
+  color: #059669;
+}
+.expiry-label {
+  font-weight: 600;
+}
+
+.expiry-date {
+  font-family: monospace;
+}
+
+
+ .stats-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  /* width: 100%; */
+  /* max-width: 28rem; */
+  margin-top: 1rem;
+  /* background-color: red; */
+}
+
+.stat-card {
+  /* flex: 1; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color:rgb(255, 244, 199);
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  /* border: 1px solid rgb(181, 84, 9); */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease;
+  cursor: pointer;
+  height: 55px;
+  
+}
+
+.stat-card:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card--summary .book-icon,
+.stat-card--pdf .file-icon {
+  color: rgb(70, 83, 102);
+  margin-right: 0.5rem;
+}
+
+.stat-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgb(181, 84, 9);
+}
+
+
+.stat-value {
+  font-family: monospace;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #064e3b;
+}
+
+.decorative-star {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 1rem;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.free-plan-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.free-star-icon {
+  color: rgb(181, 84, 9);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.free-plan-label {
+  margin-left: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  background-color: #fefce8;
+  color: #713f12;
+  border-radius: 0.75rem;
+  border: 2px solid #fef08a;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.free-plan-status {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #111827;
+}
+
+.free-plan-cta {
+  color: #4b5563;
+}
+
+.free-plan-info{
+    margin-right: 1.5rem;
+}
+@media screen and (max-width: 950px) {
+    .subscription-banner {
+    
+        margin-bottom: 1rem;
+        margin-top: -1rem;
+    }
+    
+    .subscription-content-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .stats-container {
+        width: 80%;
+    }
+    
+    .premium-button-container {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+    }
+    
+    .subscription-status {
+        font-size: 1.25rem;
+    }
+    
+    .stat-card {
+        padding: 0.75rem 1rem;
+    }
+}
+@media screen and (max-width: 1024px) {
+    .stat-card {
+    /* flex: 1; */
+   
+    height: 70px;
+}
+.pricing-cards{
+    margin-top: 1.5rem;
+
+}
+
+}
+
+@media screen and (max-width: 950px) {
+     .subscription-banner{
+max-width: 390px;
+ }
+    .pricing-cards{
+    flex-wrap: wrap;
+}
+
+}
+@media screen and (max-width: 650px) {
+ .subscription-banner{
+max-width: 390px;
+ }
+
+}

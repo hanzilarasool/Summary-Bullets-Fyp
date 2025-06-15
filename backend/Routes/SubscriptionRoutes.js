@@ -8,6 +8,6 @@ const verifyToken = require("../utils/verifyUser");
 
 // 🔐 Subscribe requires auth
 router.post("/subscribe", verifyToken.verifyToken, subscriptionController.subscribeUser);
-
+router.get("/getsubscriptionstatus", verifyToken.verifyToken, subscriptionController.getSubscriptionStatus);
 module.exports = router;
 

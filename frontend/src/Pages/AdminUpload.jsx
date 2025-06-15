@@ -294,21 +294,7 @@ const handleModelChange = (e) => {
       </div>
        <div className="sidebar-menu-icon" onClick={toggleSidebar}> <Menu size={20} className="menu-icon" /> </div>
       <div className="chat-container">
-        {/* <div className="chat-header">
-          <h2 className="chat-title">Book Summarizer</h2>
-         
-          {currentChatId && (
-            <button
-              onClick={handleDeleteChat}
-              className="delete-chat-button"
-              aria-label="Delete current chat"
-              title="Delete chat"
-            >
-              <Trash2 size={20} />
-            </button>
-          )}
-          
-        </div> */}
+        
 <div className="chat-header">
           <h2 className="chat-title">Book Summarizer</h2>
           <select
@@ -402,7 +388,7 @@ const handleModelChange = (e) => {
             ref={fileInputRef}
             onChange={handleFileSelect}
             className="file-input-hidden"
-            accept=".pdf,.doc,.docx"
+            accept=".doc,.docx"
             id="file-upload"
           />
           <label htmlFor="file-upload" className="attach-button" aria-label="Attach file">

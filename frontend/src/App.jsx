@@ -19,6 +19,7 @@ import Pricing from "./Pages/Pricing";
 import TagManager from "react-gtm-module";
 import { useEffect } from "react";
 import SubscriptionSuccess from "./Components/SubscriptionSuccess";
+import AdminSummaryRequests from "./Pages/AdminSummaryRequests";
 // import SubscriptionSuccess from ".C";
 const router = createBrowserRouter([
   {
@@ -84,6 +85,10 @@ const router = createBrowserRouter([
           {
             path: "profile",
             element: <Profile />,
+          },
+           {
+            path: "requested-summaries",
+            element: <AdminSummaryRequests />,
           },
         ],
       },

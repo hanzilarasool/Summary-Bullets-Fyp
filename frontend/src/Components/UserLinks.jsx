@@ -108,6 +108,19 @@ const UserLinks = ({ isOpen }) => {
             <img className="w-6 h-6 my-[12px]" src={stars} alt="privacy" />
             {isOpen && <span className="ml-2">Generate Summary</span>}
           </Link>
+          {/* requested summaries */}
+
+
+    <Link
+            to="/requested-summaries"
+            className={`flex items-center justify-start menu hover:bg-gray-50 rounded-lg h-12 p-2 ${
+              isOpen ? "w-[230px]" : "w-10"
+            }`}
+          >
+            <img className="w-6 h-6 my-[12px]" src={store} alt="privacy" />
+            {isOpen && <span className="ml-2">Summary Requests</span>}
+          </Link>
+          {/* requested summaries heree */}
           <Link
             to="/profile"
             className={`flex items-center justify-start menu hover:bg-gray-50 rounded-lg h-12 p-2 ${

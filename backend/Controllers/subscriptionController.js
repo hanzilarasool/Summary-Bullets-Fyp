@@ -50,7 +50,8 @@ exports.subscribeUser = async (req, res) => {
         },
       ],
       mode: "subscription",
-      success_url: `${process.env.CLIENT_URL}/subscription-success?plan=${plan}&session_id={CHECKOUT_SESSION_ID}`,
+      // success_url: `${process.env.CLIENT_URL}/subscription-success?plan=${plan}&session_id={CHECKOUT_SESSION_ID}`,
+      success_url:`${process.env.CLIENT_URL}`,
       cancel_url: `${process.env.CLIENT_URL}/pricing`,
       metadata: { userId: id.toString(), plan },
       subscription_data: {
@@ -62,11 +63,11 @@ exports.subscribeUser = async (req, res) => {
     });
 
     // 🔴 TEMPORARY DB update — replace with webhook logic
-    // user.isPremium = true;
-    // user.plan = plan;
-    // await user.save();
-    // console.log("User after save:", user);
-    // console.log(`TEMPORARY: Updated user ${id} as premium with plan ${plan}`);
+    user.isPremium = true;
+    user.plan = plan;
+    await user.save();
+    console.log("User after save:", user);
+    console.log(`TEMPORARY: Updated user ${id} as premium with plan ${plan}`);
 
     return res.status(200).json({ url: session.url });
   } catch (error) {
@@ -222,21 +223,47 @@ console.log("User after save:", user);
     res.status(500).json({ error: "Webhook processing failed" });
   }
 };
+// exports.getSubscriptionStatus = async (req, res) => {
+
+//   const { id } = req.user; // from verifyToken middleware
+
+//   try {
+//     const user = await User.findById(id);
+//     if (!user) return res.status(404).json({ error: "User not found" });
+
+//     return res.status(200).json({
+//       isPremium: user.isPremium,
+//       plan: user.plan,
+//       subscription: user.subscription,
+//       expiresAt: user.expiresAt, // ✅ add this line
+//     });
+//   } catch (error) {
+//     console.error("Get subscription status error:", error.message, error.stack);
+//     return res.status(500).json({ error: "Failed to retrieve subscription status" });
+//   }
+// };
+
 exports.getSubscriptionStatus = async (req, res) => {
-  const { id } = req.user; // from verifyToken middleware
-
   try {
-    const user = await User.findById(id);
-    if (!user) return res.status(404).json({ error: "User not found" });
+    // Assuming verifyToken puts user id into req.user.id or req.user._id
+    const userId = req.user.id || req.user._id;
+    console.log("Fetching subscription status for user ID:", userId);
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized: User ID not found." });
+    }
 
-    return res.status(200).json({
-      isPremium: user.isPremium,
-      plan: user.plan,
-      subscription: user.subscription,
-      expiresAt: user.expiresAt, // ✅ add this line
-    });
+    // Get the latest user data (including subscription info)
+    const user = await User.findById(userId).select(
+      "username email isPremium plan subscription expiresAt stripeCustomerId"
+    ).lean();
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    return res.status(200).json({ success: true, subscription: user });
   } catch (error) {
-    console.error("Get subscription status error:", error.message, error.stack);
-    return res.status(500).json({ error: "Failed to retrieve subscription status" });
+    console.error("Error fetching subscription status:", error);
+    return res.status(500).json({ message: "Server error." });
   }
 };

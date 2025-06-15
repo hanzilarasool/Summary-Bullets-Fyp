@@ -322,3 +322,67 @@ exports.sendSummaryRequest = catchAsyncErrors(async (req, res, next) => {
     next(errorHandler(500, "Failed to send summary request: " + error.message));
   }
 });
+
+
+// admin summary request /response routes
+// Admin: Get all summary requests
+exports.getAllSummaryRequests = async (req, res, next) => {
+  try {
+    if (req.user.role !== "admin") return res.status(403).json({ message: "Forbidden" });
+    const requests = await SummaryRequest.find().sort({ createdAt: -1 });
+    res.status(200).json({ success: true, requests });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Admin: Update status of a summary request
+exports.updateSummaryRequestStatus = async (req, res, next) => {
+  try {
+    if (req.user.role !== "admin") return res.status(403).json({ message: "Forbidden" });
+    const { id } = req.params;
+    const { status } = req.body;
+    if (!["pending", "processed", "rejected"].includes(status))
+      return res.status(400).json({ message: "Invalid status" });
+
+    const reqDoc = await SummaryRequest.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
+    if (!reqDoc) return res.status(404).json({ message: "Request not found" });
+    res.status(200).json({ success: true, request: reqDoc });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Admin: Send summary fulfilled email & mark as processed
+exports.sendSummaryFulfilled = async (req, res, next) => {
+  try {
+    if (req.user.role !== "admin") return res.status(403).json({ message: "Forbidden" });
+    const { requestId, email, message } = req.body;
+    if (!requestId || !email || !message)
+      return res.status(400).json({ message: "Missing required fields" });
+
+    // Send email
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Your Book Summary Request is Fulfilled!",
+      text: message,
+      html: `<p>${message}</p>`,
+    };
+    await transporter.sendMail(mailOptions);
+
+    // Update request status
+    const reqDoc = await SummaryRequest.findByIdAndUpdate(
+      requestId,
+      { status: "processed" },
+      { new: true }
+    );
+    res.status(200).json({ success: true, request: reqDoc });
+  } catch (err) {
+    next(err);
+  }
+};

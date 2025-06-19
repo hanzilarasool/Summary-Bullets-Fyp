@@ -17,8 +17,7 @@ const [hasUserClicked, setHasUserClicked] = useState(false);
 
   // Available voices for selection
   const [voice, setVoice] = useState("alloy");
-  // const voices = ["alloy", "shimmer", "echo", "nova"]; // Example voices; adjust based on backend support
-
+  
  
   const generateAudio = useCallback(async () => {
   if (isGenerating || !bookName || !content) return;
@@ -88,19 +87,7 @@ useEffect(() => {
     }
   };
 
-  // const togglePlay = () => {
-  //   if (!audioSrc) {
-  //     generateAudio();
-  //     return;
-  //   }
-
-  //   if (isPlaying) {
-  //     audioRef.current.pause();
-  //   } else {
-  //     audioRef.current.play();
-  //   }
-  //   setIsPlaying(!isPlaying);
-  // };
+ 
 const togglePlay = () => {
   if (!hasUserClicked) setHasUserClicked(true); // first interaction
 
@@ -152,30 +139,7 @@ const formatTime = (seconds) => {
         
       </div>
 
-      {/* {audioSrc  && (
-        <div className="mt-4 audio-progress-bar">
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={(progress / duration) * 100 || 0}
-            onChange={handleSeek}
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-          />
-          <div className="text-sm text-gray-600">
-            {Math.floor(progress)}s / {Math.floor(duration)}s
-          </div>
-          <audio
-            ref={audioRef}
-            src={audioSrc}
-            onTimeUpdate={handleTimeUpdate}
-            onEnded={() => setIsPlaying(false)}
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-          />
-        </div>
-      )} */}
-
+      
       {audioSrc && hasUserClicked && (
   <div className="mt-4 audio-progress-bar">
     <input

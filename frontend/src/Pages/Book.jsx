@@ -6,7 +6,7 @@ import amazon from "../assets/amazon.svg";
 import { FaChevronRight, FaRegClock } from "react-icons/fa6";
 import config from "../config";
 import PDFdownload from "../Components/PDFdownload";
-import AudioPlayer from "../Components/AudioPlayer";
+import AudioPlayer1 from "../Components/AudioPlayer1";
 import ShowBook from "./ShowBook";
 import OtherBooks1 from "../Components/OtherBooks1";
 import BookCarousel from "../Components/BookCarousel";
@@ -173,6 +173,7 @@ const handlePDFDownload = async (generatePDF) => {
             <div className="text-slate-600 text-base font-normal font-['Inter'] leading-normal">
               {blogData.introduction}
             </div>
+            {blogData && <AudioPlayer1 bookName={blogData.bookName} content={blogData.content} />}
           </div>
         </div>
 
@@ -184,7 +185,7 @@ const handlePDFDownload = async (generatePDF) => {
                 content={blogData.content}
                 onDownload={handlePDFDownload}
               />
-              {blogData && <AudioPlayer bookName={blogData.bookName} content={blogData.content} />}
+              {/* {blogData && <AudioPlayer bookName={blogData.bookName} content={blogData.content} />} */}
             </div>
             <img
               src={blogData.coverImage}

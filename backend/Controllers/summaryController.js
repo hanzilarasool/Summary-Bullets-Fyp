@@ -39,38 +39,7 @@ const generateSummary = async (req, res) => {
   }
 };
 
-// generate audio
-// const generateAudio = async (req, res) => {
-//   const { text, bookName } = req.body;
 
-//   if (!text) {
-//     return res.status(400).json({ error: "Text is required for audio generation." });
-//   }
-
-//   try {
-//     // Generate audio using OpenAI TTS
-//     const audioResponse = await openai.audio.speech.create({
-//       model: "tts-1", // Use TTS model
-//       voice: "alloy", // Choose a voice (options: alloy, echo, fable, onyx, nova, shimmer)
-//       input: text,
-//     });
-
-//     // Convert the response to a buffer
-//     const audioBuffer = Buffer.from(await audioResponse.arrayBuffer());
-
-//     // Set response headers for audio
-//     res.set({
-//       "Content-Type": "audio/mpeg",
-//       "Content-Disposition": `attachment; filename="${bookName}-summary.mp3"`,
-//     });
-
-//     // Send the audio buffer
-//     res.send(audioBuffer);
-//   } catch (error) {
-//     console.error("Audio generation error:", error);
-//     res.status(500).json({ error: "Failed to generate audio." });
-//   }
-// };
 const path = require("path");
 const fs = require("fs");
 

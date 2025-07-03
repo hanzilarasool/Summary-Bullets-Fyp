@@ -40,40 +40,111 @@ const generateSummary = async (req, res) => {
 };
 
 
+// const path = require("path");
+// const fs = require("fs");
+
+// const generateAudio = async (req, res) => {
+//   const { text, bookName, voice = "alloy" } = req.body;
+//   const filePath = path.join(__dirname, `../audios/${bookName}-${voice}.mp3`);
+
+//   // If audio already exists, serve it
+//   if (fs.existsSync(filePath)) {
+//     return res.sendFile(filePath);
+//   }
+
+//   try {
+//     const audioResponse = await openai.audio.speech.create({
+//       model: "tts-1",
+//       voice,
+//       input: text,
+//     });
+
+//     const buffer = Buffer.from(await audioResponse.arrayBuffer());
+//     fs.writeFileSync(filePath, buffer); // Save to disk
+
+//     res.set({
+//       "Content-Type": "audio/mpeg",
+//       "Content-Disposition": `attachment; filename="${bookName}-summary.mp3"`,
+//     });
+//     res.send(buffer);
+//   } catch (error) {
+//     console.error("Audio generation error:", error);
+//     res.status(500).json({ error: "Failed to generate audio." });
+//   }
+// };
+
+
 const path = require("path");
 const fs = require("fs");
 
 const generateAudio = async (req, res) => {
   const { text, bookName, voice = "alloy" } = req.body;
+  const maxLength = 4096; // OpenAI TTS input limit
   const filePath = path.join(__dirname, `../audios/${bookName}-${voice}.mp3`);
 
   // If audio already exists, serve it
   if (fs.existsSync(filePath)) {
-    return res.sendFile(filePath);
+    try {
+      const stats = fs.statSync(filePath);
+      if (stats.size > 0) {
+        console.log(`Serving cached audio: ${filePath}, size: ${stats.size} bytes`);
+        return res.sendFile(filePath);
+      } else {
+        console.warn(`Cached file ${filePath} is empty, regenerating...`);
+        fs.unlinkSync(filePath);
+      }
+    } catch (err) {
+      console.error(`Error accessing cached file ${filePath}:`, err);
+      fs.unlinkSync(filePath);
+    }
+  }
+
+  // Validate input
+  if (!text || typeof text !== "string") {
+    return res.status(400).json({ error: "Invalid or missing text input." });
   }
 
   try {
+    // Truncate text to 4096 characters
+    const inputText = text.length > maxLength ? text.slice(0, maxLength) : text;
+    console.log(`Generating audio for text length: ${inputText.length} (original: ${text.length})`);
+
     const audioResponse = await openai.audio.speech.create({
       model: "tts-1",
       voice,
-      input: text,
+      input: inputText,
     });
 
     const buffer = Buffer.from(await audioResponse.arrayBuffer());
-    fs.writeFileSync(filePath, buffer); // Save to disk
+    if (!buffer.length) {
+      throw new Error("Empty audio buffer received from API");
+    }
+
+    // Create audios directory if it doesn't exist
+    const audiosDir = path.join(__dirname, "../audios");
+    if (!fs.existsSync(audiosDir)) {
+      fs.mkdirSync(audiosDir, { recursive: true });
+      console.log(`Created directory: ${audiosDir}`);
+    }
+
+    fs.writeFileSync(filePath, buffer);
+    console.log(`Saved audio file: ${filePath}, size: ${buffer.length} bytes`);
 
     res.set({
       "Content-Type": "audio/mpeg",
       "Content-Disposition": `attachment; filename="${bookName}-summary.mp3"`,
     });
-    res.send(buffer);
+    return res.send(buffer);
   } catch (error) {
     console.error("Audio generation error:", error);
-    res.status(500).json({ error: "Failed to generate audio." });
+    if (error.status === 400 && error.error?.message.includes("string_too_long")) {
+      return res.status(400).json({
+        error: "Input text exceeds 4096 characters. Text has been truncated.",
+      });
+    }
+    res.status(500).json({ error: `Failed to generate audio: ${error.message}` });
   }
 };
-
-
 const getChats = async (req, res) => {
   const { userId } = req.params;
   if (!userId) {

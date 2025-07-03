@@ -1,0 +1,8 @@
+file 'D:\aaaa-Fyp\Summary-Bullets-Fyp\backend\audios\temp-A Random Walk Down Wall Street-alloy-0.mp3'
+file 'D:\aaaa-Fyp\Summary-Bullets-Fyp\backend\audios\temp-A Random Walk Down Wall Street-alloy-1.mp3'
+file 'D:\aaaa-Fyp\Summary-Bullets-Fyp\backend\audios\temp-A Random Walk Down Wall Street-alloy-2.mp3'
+file 'D:\aaaa-Fyp\Summary-Bullets-Fyp\backend\audios\temp-A Random Walk Down Wall Street-alloy-3.mp3'
+file 'D:\aaaa-Fyp\Summary-Bullets-Fyp\backend\audios\temp-A Random Walk Down Wall Street-alloy-4.mp3'
+file 'D:\aaaa-Fyp\Summary-Bullets-Fyp\backend\audios\temp-A Random Walk Down Wall Street-alloy-5.mp3'
+file 'D:\aaaa-Fyp\Summary-Bullets-Fyp\backend\audios\temp-A Random Walk Down Wall Street-alloy-6.mp3'
+file 'D:\aaaa-Fyp\Summary-Bullets-Fyp\backend\audios\temp-A Random Walk Down Wall Street-alloy-7.mp3'

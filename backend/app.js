@@ -46,7 +46,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use("/api/v1", blog);
 app.use("/api/v1", privacy);
 app.use("/api/v1", User);
-app.use("", sitemap); 
+app.use("", sitemap);  
 app.use("/api/summary", summaryRoutes);
 
 app.use("/api/v1", subscriptionRoutes); // <-- include this here

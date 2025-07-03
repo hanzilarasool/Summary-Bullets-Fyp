@@ -1,5 +1,6 @@
 .subscription-banner{
   background-color: rgb(252, 252, 252);
+  /* background-color: rgb(247, 249, 250); */
   width: 97%;
   margin: 0rem auto;
   margin-bottom: 1.5rem;
@@ -107,20 +108,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color:rgb(255, 244, 199);
+  /* background-color:rgb(255, 244, 199); */
   padding: 1rem 1.25rem;
   border-radius: 0.75rem;
   /* border: 1px solid rgb(181, 84, 9); */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.2s ease;
-  cursor: pointer;
-  height: 55px;
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+  /* transition: box-shadow 0.2s ease; */
+  border-radius: 24px;
+border: 0.5px solid var(--Gray-300, #D0D5DD);
+background: #FFF;
+  /* cursor: pointer; */
+  height: 54px;
+
   
 }
 
-.stat-card:hover {
+/* .stat-card:hover {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-}
+} */
 
 .stat-card--summary .book-icon,
 .stat-card--pdf .file-icon {
@@ -135,16 +140,24 @@
 }
 
 .stat-label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: rgb(181, 84, 9);
+
+  /* color: rgb(181, 84, 9); */
+  color: #000;
+
+/* Text xs/Regular */
+font-family: Inter;
+font-size: 14px;
+font-style: normal;
+font-weight: 400;
+line-height: 18px; /* 150% */
+margin-top: 10px;
 }
 
 
 .stat-value {
   font-family: monospace;
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 450;
   color: #064e3b;
 }
 

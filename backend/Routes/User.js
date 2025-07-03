@@ -13,13 +13,16 @@ const {
   sendSummaryRequest,
   getAllSummaryRequests,
   updateSummaryRequestStatus,
-  sendSummaryFulfilled
+  sendSummaryFulfilled,
+  verifyOtp
 } = require("../Controllers/userController");
 const verifyToken = require("../utils/verifyUser");
 const router = express.Router();
  
 router.route("/signin").post(signin);
 router.route("/signup").post(signup);
+// POST /api/v1/verify-otp - Verify OTP and register user
+router.route("/verify-otp").post(verifyOtp);
 router.route("/signout").post(signout);
 router.route("/changeEmail").put(verifyToken.verifyToken, changeEmail);
 router.route("/changePassword").put(verifyToken.verifyToken, changePassword);

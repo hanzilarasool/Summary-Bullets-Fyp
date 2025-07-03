@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { signoutSuccess } from "../redux/user/userSlice";
 import book from "../assets/Fr.svg";
+import plan from "../assets/plan.svg";
 import request from "../assets/icon2.svg";
 import stars from "../assets/stars.svg";
 import store from "../assets/store.svg";
@@ -193,7 +194,7 @@ const UserLinks = ({ isOpen }) => {
                 >
                 <img
                   className="w-6 h-6 my-[12px]"
-                  src={isActive("/pricing") ? clickedExplore : book}
+                  src={isActive("/pricing") ? plan : plan}
                   alt="Dashboard"
                 />
                 {isOpen && <span className="ml-2">Pricing</span>}
@@ -226,8 +227,8 @@ const UserLinks = ({ isOpen }) => {
               className={`h-px linecolor my-[12px] ${isOpen ? "w-[100px]" : "w-10"}`}
             ></div>
           </div>
-
-          <Link
+{/* book store is hidden for now */}
+          {/* <Link
             to="/"
             className={`flex items-center hover:bg-gray-50 rounded-lg h-12 p-2 ${
               isOpen ? "w-[230px]" : "w-10"
@@ -244,7 +245,7 @@ const UserLinks = ({ isOpen }) => {
                 </div>
               </span>
             )}
-          </Link>
+          </Link> */}
 
           <Link
             to="/"

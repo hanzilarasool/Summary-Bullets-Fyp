@@ -6,6 +6,7 @@ const { errorHandler } = require("../utils/error.js");
 require("dotenv").config();
 const SummaryRequest = require("../Models/SummaryRequest.js");
 const nodemailer = require("nodemailer");
+const Otp=require("../Models/otp.js");
 require("dotenv").config();
 
 
@@ -87,18 +88,7 @@ exports.signin = catchAsyncErrors(async (req, res, next) => {
   // Prepare user data excluding password
   const { password: _, ...userData } = user._doc;
 
-  // Send response with cookie and also send token in body
-  // res
-  //   .status(200)
-  //   .cookie("access_token", token, {
-  //     httpOnly: true,
-  //     secure: true,
-  //     sameSite: "strict",
-  //   })
-  //   .json({
-  //     token,
-  //     user: userData
-  //   }); 
+ 
   res
   .status(200)
   .cookie("access_token", token, {
@@ -132,45 +122,94 @@ exports.protectedRoute = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
-exports.signup = catchAsyncErrors(async (req, res, next) => {
-  const { username, email, password } = req.body;
 
-  // Validate input
-  if (!username || !email || !password || username.trim() === "" || email.trim() === "" || password.trim() === "") {
-    return next(errorHandler(400, "Username, email, and password are required"));
+//////////////////////signnup
+exports.signup = async (req, res) => {
+  const { username,name, email, password } = req.body;
+
+  // console.log(username, name, email, password,"are the fields");
+console.log("Signup request received:", { username, email, password });
+  try {
+    // Check if user already exists
+    let existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ msg: "User already exists" });
+    }
+
+    // Generate OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 min
+    console.log("Generated OTP:", otp, "Expires at:", expiresAt);
+
+    // Upsert OTP record (one per email)
+    await Otp.findOneAndUpdate(
+      { email },
+      { email, otp, expiresAt, username:username, password },
+      { upsert: true, new: true }
+    );
+
+    // Send OTP via email
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Your OTP for Registration",
+      text: `Your OTP is ${otp}. It is valid for 10 minutes.`,
+    });
+
+    res.status(200).json({ msg: "OTP sent to your email. Please verify to complete registration." });
+  } catch (err) {
+    console.error("Register Error:", err);
+    res.status(500).json({ msg: "Server error sending OTP" });
   }
+};
 
-  // Check for existing username or email
-  const existingUser = await User.findOne({ $or: [{ username: username.trim() }, { email: email.trim() }] });
-  if (existingUser) {
-    return next(errorHandler(400, existingUser.username === username.trim() ? "Username already in use" : "Email already in use"));
-  }
 
-  // Validate password length (optional, for better security)
-  if (password.length < 6) {
-    return next(errorHandler(400, "Password must be at least 6 characters long"));
-  }
 
-  const hashedPassword = bcryptjs.hashSync(password, 10);
-
-  const newUser = new User({
-    username: username.trim(),
-    email: email.trim(),
-    password: hashedPassword,
-  });
+// /////verify otp
+exports.verifyOtp = async (req, res) => {
+  const { email, otp } = req.body;
 
   try {
-    await newUser.save();
-    res.status(201).json({ message: "Signup successful" });
-  } catch (error) {
-    console.error("Signup error:", error);
-    if (error.code === 11000) {
-      const field = Object.keys(error.keyValue)[0];
-      return next(errorHandler(400, `${field} already in use`));
+    // Find OTP doc
+    const otpRecord = await Otp.findOne({ email });
+    if (!otpRecord) return res.status(400).json({ msg: "No OTP found for this email" });
+
+    // Validate OTP and expiry
+    if (otpRecord.otp !== otp)
+      return res.status(400).json({ msg: "Incorrect OTP" });
+    if (otpRecord.expiresAt < new Date())
+      return res.status(400).json({ msg: "OTP expired" });
+
+    // Double-check user doesn't exist
+    let existingUser = await User.findOne({ email });
+    if (existingUser) {
+      await Otp.deleteOne({ email }); // cleanup
+      return res.status(400).json({ msg: "User already exists" });
     }
-    next(errorHandler(500, "Failed to create user"));
+
+    // Create user (hash password)
+    const hashedPassword = await bcryptjs.hash(otpRecord.password, 10);
+    const newUser = new User({
+      username: otpRecord.username,
+      email,
+      password: hashedPassword,
+    });
+    await newUser.save();
+
+    // Remove OTP record
+    await Otp.deleteOne({ email });
+
+    res.status(201).json({ msg: "User registered successfully" });
+  } catch (err) {
+    console.error("OTP Verify Error:", err);
+    res.status(500).json({ msg: "Server error verifying OTP" });
   }
-});
+};
+
+
+
+
+
 
 exports.changePassword = catchAsyncErrors(async (req, res, next) => {
   const { currentPassword, newPassword } = req.body;
